@@ -1,3 +1,3 @@
-module github.com/deltam/permgen
+module github.com/deltam/perm
 
 go 1.12
