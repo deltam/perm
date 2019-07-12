@@ -44,12 +44,12 @@ func (p *Perm) Next() {
 		p.done = true
 		return
 	}
-	if check(p.cur) {
-		tau(p.cur)
-		tauSlice(p.slice)
+	if doSwap(p.cur) {
+		swap(p.cur)
+		swapSlice(p.slice)
 	} else {
-		sigma(p.cur)
-		sigmaSlice(p.slice)
+		rot(p.cur)
+		rotSlice(p.slice)
 	}
 }
 
@@ -87,39 +87,37 @@ func (p Perm) isLast() bool {
 	return true
 }
 
-// 1 2 3 4 ... n-2 n-1 0
-func sigma(p []int) {
+func rot(p []int) {
 	n := len(p)
 	f := p[0]
 	copy(p[0:n-1], p[1:n])
 	p[n-1] = f
 }
 
-func tau(p []int) {
+func swap(p []int) {
 	p[1], p[0] = p[0], p[1]
 }
 
-func sigmaSlice(slice interface{}) {
+func rotSlice(slice interface{}) {
 	if slice == nil {
 		return
 	}
 	rv := reflect.ValueOf(slice)
-	swap := reflect.Swapper(slice)
+	sw := reflect.Swapper(slice)
 	n := rv.Len()
 	for i := 1; i < n; i++ {
-		swap(i-1, i)
+		sw(i-1, i)
 	}
 }
 
-func tauSlice(slice interface{}) {
+func swapSlice(slice interface{}) {
 	if slice == nil {
 		return
 	}
-	swap := reflect.Swapper(slice)
-	swap(0, 1)
+	reflect.Swapper(slice)(0, 1)
 }
 
-func check(p []int) bool {
+func doSwap(p []int) bool {
 	n := len(p)
 	if p[1] == n-1 {
 		return false
