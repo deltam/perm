@@ -10,22 +10,32 @@ import (
 // Perm represents current permutation
 type Perm struct {
 	cur   []int
-	done  bool
 	slice interface{}
+	done  bool
+
+	cycleEnd   []int
+	onBigCycle bool
 }
 
 // New returns permutation generator
 func New(n int) Perm {
-	start := startPerm(n)
-	return Perm{cur: start}
+	end := make([]int, n)
+	for i := 0; i < n; i++ {
+		end[i] = n - i - 1
+	}
+	start := make([]int, n)
+	copy(start, end)
+	swap(start)
+	return Perm{cur: start, cycleEnd: end, onBigCycle: n < 3}
 }
 
 // Iter generates slice's permutation generator
 func Iter(slice interface{}) Perm {
 	rv := reflect.ValueOf(slice)
 	len := rv.Len()
-	start := startPerm(len)
-	return Perm{cur: start, slice: slice}
+	p := New(len)
+	p.slice = slice
+	return p
 }
 
 // Index returns current permutation as array index
@@ -40,51 +50,28 @@ func (p *Perm) Next() {
 	if p.done {
 		return
 	}
-	if p.isLast() {
+	end := eqArray(p.cur, p.cycleEnd)
+	if end && p.onBigCycle {
 		p.done = true
 		return
 	}
-	if doSwap(p.cur) {
+	if doSwap(p.cur) && !end {
 		swap(p.cur)
 		swapSlice(p.slice)
 	} else {
 		rot(p.cur)
 		rotSlice(p.slice)
 	}
+	if end && !p.onBigCycle {
+		p.onBigCycle = true
+		copy(p.cycleEnd, p.cur)
+		swap(p.cycleEnd)
+	}
 }
 
 // Done returns permutation is all
 func (p Perm) Done() bool {
 	return p.done
-}
-
-func startPerm(n int) []int {
-	start := make([]int, n)
-	start[0] = n - 2
-	start[1] = n - 1
-	for i := 2; i < n; i++ {
-		start[i] = n - i - 1
-	}
-	return start
-}
-
-func (p Perm) isLast() bool {
-	n := len(p.cur)
-	if p.cur[n-1] != n-1 {
-		return false
-	}
-	for i := 0; i < n-1; i++ {
-		j := i
-		if i == 0 {
-			j = 1
-		} else if i == 1 {
-			j = 0
-		}
-		if p.cur[i] != n-j-2 {
-			return false
-		}
-	}
-	return true
 }
 
 func rot(p []int) {
@@ -95,6 +82,9 @@ func rot(p []int) {
 }
 
 func swap(p []int) {
+	if len(p) < 2 {
+		return
+	}
 	p[1], p[0] = p[0], p[1]
 }
 
@@ -119,6 +109,9 @@ func swapSlice(slice interface{}) {
 
 func doSwap(p []int) bool {
 	n := len(p)
+	if n < 2 {
+		return false
+	}
 	if p[1] == n-1 {
 		return false
 	}
@@ -139,10 +132,14 @@ func doSwap(p []int) bool {
 	if p[pos%n] != (p[1]-2+n)%(n-1) {
 		return false
 	}
-	for i := 0; i < n; i++ {
-		if p[i] != n-i-1 {
-			return true
+	return true
+}
+
+func eqArray(s1 []int, s2 []int) bool {
+	for i := 0; i < len(s1); i++ {
+		if s1[i] != s2[i] {
+			return false
 		}
 	}
-	return false
+	return true
 }
