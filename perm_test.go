@@ -72,3 +72,10 @@ func TestPerm_Done(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkNext(b *testing.B) {
+	p := New(11)
+	for !p.Done() {
+		p.Next()
+	}
+}
