@@ -12,21 +12,22 @@ type Perm struct {
 	cur   []int
 	slice interface{}
 	done  bool
-
-	cycleEnd   []int
-	onBigCycle bool
 }
 
 // New returns permutation generator
 func New(n int) Perm {
-	end := make([]int, n)
-	for i := 0; i < n; i++ {
-		end[i] = n - i - 1
-	}
 	start := make([]int, n)
-	copy(start, end)
-	swap(start)
-	return Perm{cur: start, cycleEnd: end, onBigCycle: n < 3}
+	for i := 0; i < n; i++ {
+		start[i] = n - i - 1
+	}
+	if n > 2 {
+		swap(start)
+	}
+	p := Perm{cur: start}
+	if n < 2 {
+		p.done = true
+	}
+	return p
 }
 
 // Iter generates slice's permutation generator
@@ -50,22 +51,14 @@ func (p *Perm) Next() {
 	if p.done {
 		return
 	}
-	end := eqArray(p.cur, p.cycleEnd)
-	if end && p.onBigCycle {
+	if isDescOrder(p.cur, true) {
 		p.done = true
 		return
 	}
-	if doSwap(p.cur) && !end {
-		swap(p.cur)
-		swapSlice(p.slice)
-	} else {
-		rot(p.cur)
-		rotSlice(p.slice)
-	}
-	if end && !p.onBigCycle {
-		p.onBigCycle = true
-		copy(p.cycleEnd, p.cur)
-		swap(p.cycleEnd)
+	rev := isDescOrder(p.cur, false)
+	successor(p, rev)
+	if rev && len(p.cur) > 2 {
+		successor(p, false)
 	}
 }
 
@@ -74,8 +67,21 @@ func (p Perm) Done() bool {
 	return p.done
 }
 
+func successor(p *Perm, forceRot bool) {
+	if !forceRot && doSwap(p.cur) {
+		swap(p.cur)
+		swapSlice(p.slice)
+	} else {
+		rot(p.cur)
+		rotSlice(p.slice)
+	}
+}
+
 func rot(p []int) {
 	n := len(p)
+	if n < 2 {
+		return
+	}
 	f := p[0]
 	copy(p[0:n-1], p[1:n])
 	p[n-1] = f
@@ -109,7 +115,7 @@ func swapSlice(slice interface{}) {
 
 func doSwap(p []int) bool {
 	n := len(p)
-	if n < 2 {
+	if n <= 2 {
 		return false
 	}
 	if p[1] == n-1 {
@@ -129,15 +135,23 @@ func doSwap(p []int) bool {
 	if pos == 1 {
 		pos = 2
 	}
-	if p[pos%n] != (p[1]-2+n)%(n-1) {
+	if p[pos] != (p[1]-2+n)%(n-1) {
 		return false
 	}
 	return true
 }
 
-func eqArray(s1 []int, s2 []int) bool {
-	for i := 0; i < len(s1); i++ {
-		if s1[i] != s2[i] {
+func isDescOrder(p []int, rot bool) bool {
+	n := len(p)
+	if n < 2 {
+		return false
+	}
+	d := 1
+	if rot {
+		d++
+	}
+	for i := 0; i <= n-d; i++ {
+		if p[i] != n-i-d {
 			return false
 		}
 	}

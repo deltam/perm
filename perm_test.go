@@ -12,7 +12,7 @@ func TestPerm_Next(t *testing.T) {
 		all int
 	}{
 		{0, nil, 0},
-		{1, []int{1}, 1},
+		{1, []int{1}, 0},
 		{2, []int{1, 2}, 1 * 2},
 		{3, []int{1, 2, 3}, 1 * 2 * 3},
 		{4, []int{1, 2, 3, 4}, 1 * 2 * 3 * 4},
@@ -44,7 +44,7 @@ func TestPerm_Done(t *testing.T) {
 		all int
 	}{
 		{0, nil, 0},
-		{1, []int{1}, 1},
+		{1, []int{1}, 0},
 		{2, []int{1, 2}, 1 * 2},
 		{3, []int{1, 2, 3}, 1 * 2 * 3},
 		{4, []int{1, 2, 3, 4}, 1 * 2 * 3 * 4},
@@ -52,14 +52,16 @@ func TestPerm_Done(t *testing.T) {
 	}
 	for _, tc := range testcase {
 		p := Iter(tc.ns)
-		for i := 0; i < tc.all-1; i++ {
-			if p.Done() {
-				t.Errorf("n=%d: not finished: Done got true, want false: [%d] %v", tc.n, i, tc.ns)
+		if tc.n > 1 {
+			for i := 0; i < tc.all-1; i++ {
+				if p.Done() {
+					t.Errorf("n=%d: not finished: Done got true, want false: [%d] %v", tc.n, i, tc.ns)
+				}
+				p.Next()
 			}
-			p.Next()
 		}
 
-		if p.Done() {
+		if tc.n > 1 && p.Done() {
 			t.Errorf("n=%d: not finished: Done got true, want false: %v", tc.n, tc.ns)
 		}
 		p.Next()
