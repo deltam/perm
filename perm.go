@@ -15,7 +15,7 @@ type Perm struct {
 }
 
 // New returns permutation generator
-func New(n int) Perm {
+func New(n int) *Perm {
 	start := make([]int, n)
 	for i := 0; i < n; i++ {
 		start[i] = n - i - 1
@@ -27,7 +27,7 @@ func New(n int) Perm {
 	if n < 2 {
 		p.done = true
 	}
-	return p
+	return &p
 }
 
 // Iter returns an iterator of slice's all permutation
@@ -39,8 +39,15 @@ func Iter(slice interface{}) *Perm {
 	return p
 }
 
+// StartFrom returns permutation generator that start from specified permutation
+func StartFrom(index []int, slice interface{}) *Perm {
+	cur := make([]int, len(index))
+	copy(cur, index)
+	return &Perm{cur: cur, slice: slice}
+}
+
 // Index returns current permutation as array index
-func (p Perm) Index() []int {
+func (p *Perm) Index() []int {
 	idx := make([]int, len(p.cur))
 	copy(idx, p.cur)
 	return idx
@@ -64,7 +71,7 @@ func (p *Perm) Next() {
 }
 
 // Done returns permutation is all
-func (p Perm) Done() bool {
+func (p *Perm) Done() bool {
 	return p.done
 }
 
