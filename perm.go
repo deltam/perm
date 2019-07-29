@@ -51,13 +51,14 @@ func (p *Perm) Next() {
 	if p.done {
 		return
 	}
-	if isDescOrder(p.cur, true) {
+	n := len(p.cur)
+	if n < 2 || isDescOrder(p.cur, n-1) {
 		p.done = true
 		return
 	}
-	rev := isDescOrder(p.cur, false)
-	successor(p, rev)
-	if rev && len(p.cur) > 2 {
+	r := isDescOrder(p.cur, n)
+	successor(p, r)
+	if r && n > 2 {
 		successor(p, false)
 	}
 }
@@ -68,7 +69,7 @@ func (p Perm) Done() bool {
 }
 
 func successor(p *Perm, forceRot bool) {
-	if !forceRot && doSwap(p.cur) {
+	if !forceRot && ruleSwap(p.cur) {
 		swap(p.cur)
 		swapSlice(p.slice)
 	} else {
@@ -113,7 +114,7 @@ func swapSlice(slice interface{}) {
 	reflect.Swapper(slice)(0, 1)
 }
 
-func doSwap(p []int) bool {
+func ruleSwap(p []int) bool {
 	n := len(p)
 	if n <= 2 {
 		return false
@@ -121,37 +122,22 @@ func doSwap(p []int) bool {
 	if p[1] == n-1 {
 		return false
 	}
-	pos := 0
-	for i := 0; i < n; i++ {
-		if i == 1 {
-			continue
-		}
+	pos := 2
+	for i := 2; i < n; i++ {
 		if p[i] == n-1 {
-			pos = i
+			pos = (i + 1) % n
 			break
 		}
 	}
-	pos = (pos + 1) % n
-	if pos == 1 {
-		pos = 2
-	}
-	if p[pos] != (p[1]-2+n)%(n-1) {
+	if p[pos] != (p[1]+n-2)%(n-1) {
 		return false
 	}
 	return true
 }
 
-func isDescOrder(p []int, rot bool) bool {
-	n := len(p)
-	if n < 2 {
-		return false
-	}
-	d := 1
-	if rot {
-		d++
-	}
-	for i := 0; i <= n-d; i++ {
-		if p[i] != n-i-d {
+func isDescOrder(p []int, n int) bool {
+	for i := 0; i < n; i++ {
+		if p[i] != n-i-1 {
 			return false
 		}
 	}
