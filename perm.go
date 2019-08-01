@@ -100,11 +100,13 @@ func rotSlice(slice interface{}) {
 		return
 	}
 	rv := reflect.ValueOf(slice)
-	sw := reflect.Swapper(slice)
 	n := rv.Len()
-	for i := 1; i < n; i++ {
-		sw(i-1, i)
+	if n < 2 {
+		return
 	}
+	f := rv.Index(0).Interface()
+	reflect.Copy(rv.Slice(0, n-1), rv.Slice(1, n))
+	rv.Index(n - 1).Set(reflect.ValueOf(f))
 }
 
 func swapSlice(slice interface{}) {
