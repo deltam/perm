@@ -30,8 +30,8 @@ func New(n int) Perm {
 	return p
 }
 
-// Iter generates slice's permutation generator
-func Iter(slice interface{}) Perm {
+// Iter returns an iterator of slice's all permutation
+func Iter(slice interface{}) *Perm {
 	rv := reflect.ValueOf(slice)
 	len := rv.Len()
 	p := New(len)
