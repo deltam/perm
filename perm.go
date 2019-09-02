@@ -1,4 +1,4 @@
-// copyright author MISUMI Masaru(deltam)
+// Copyright 2019 deltam
 
 // Package perm provides a permutation generator based on group theory.
 package perm
