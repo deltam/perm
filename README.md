@@ -2,7 +2,7 @@
 
 Permutation generator based on group theory[^1].
 
-- Fast and less memory
+- Stateless, generate next permutation from current permutation only.
 - Permutation order is **NOT** lexical.
 
 ## Installation
