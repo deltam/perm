@@ -65,7 +65,13 @@ func StartFrom(index []int, slice interface{}) *Perm {
 }
 
 // Index returns current permutation as array index
+// CAUTION: If edit returned array, generator breaks
 func (p *Perm) Index() []int {
+	return p.cur
+}
+
+// Index returns copy of current permutation as array index
+func (p *Perm) IndexCopy() []int {
 	idx := make([]int, len(p.cur))
 	copy(idx, p.cur)
 	return idx
