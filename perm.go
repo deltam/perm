@@ -142,24 +142,28 @@ func ruleSwap(p []int) bool {
 	if p[1] == n-1 {
 		return false
 	}
-	pos := 2
-	for i := 2; i < n; i++ {
+	if p[0] == n-1 {
+		return p[2] == p[1]-1 || p[1] == 0 && p[2] == n-2
+	}
+	if p[n-1] == n-1 {
+		return p[0] == p[1]-1 || p[1] == 0 && p[0] == n-2
+	}
+	for i := 2; i < n-1; i++ {
 		if p[i] == n-1 {
-			pos = (i + 1) % n
-			break
+			return p[i+1] == p[1]-1 || p[1] == 0 && p[i+1] == n-2
+			//return p[i+1] == (p[1]-1+(n-1))%(n-1)
 		}
 	}
-	if p[pos] != (p[1]+n-2)%(n-1) {
-		return false
-	}
-	return true
+	return false // not reached
 }
 
 func isDescOrder(p []int, n int) bool {
+	m := n - 1
 	for i := 0; i < n; i++ {
-		if p[i] != n-i-1 {
+		if p[i] != m {
 			return false
 		}
+		m--
 	}
 	return true
 }
