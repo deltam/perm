@@ -95,50 +95,42 @@ func (p *Perm) Done() bool {
 }
 
 func successor(p *Perm, forceRot bool) {
+	if len(p.cur) < 2 {
+		return
+	}
 	if !forceRot && ruleSwap(p.cur) {
 		swap(p.cur)
-		swapSlice(p.slice)
+		if p.slice != nil {
+			swapSlice(p.slice)
+		}
 	} else {
 		rot(p.cur)
-		rotSlice(p.slice)
+		if p.slice != nil {
+			rotSlice(p.slice)
+		}
 	}
 }
 
 func rot(p []int) {
 	n := len(p)
-	if n < 2 {
-		return
-	}
 	f := p[0]
 	copy(p[0:n-1], p[1:n])
 	p[n-1] = f
 }
 
 func swap(p []int) {
-	if len(p) < 2 {
-		return
-	}
 	p[1], p[0] = p[0], p[1]
 }
 
 func rotSlice(slice interface{}) {
-	if slice == nil {
-		return
-	}
 	rv := reflect.ValueOf(slice)
 	n := rv.Len()
-	if n < 2 {
-		return
-	}
 	f := rv.Index(0).Interface()
 	reflect.Copy(rv.Slice(0, n-1), rv.Slice(1, n))
 	rv.Index(n - 1).Set(reflect.ValueOf(f))
 }
 
 func swapSlice(slice interface{}) {
-	if slice == nil {
-		return
-	}
 	reflect.Swapper(slice)(0, 1)
 }
 
