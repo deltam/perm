@@ -75,6 +75,37 @@ func TestPerm_Done(t *testing.T) {
 	}
 }
 
+func TestPerm_StartFrom(t *testing.T) {
+	{
+		small := []int{2, 3, 1, 0}
+		p := StartFrom(small, nil)
+		if p.largeCycle {
+			t.Errorf("%v is small cycle", small)
+		}
+	}
+	{
+		small := []int{3, 1, 0, 2}
+		p := StartFrom(small, nil)
+		if p.largeCycle {
+			t.Errorf("%v is small cycle", small)
+		}
+	}
+	{
+		large := []int{1, 2, 0, 3}
+		p := StartFrom(large, nil)
+		if !p.largeCycle {
+			t.Errorf("%v is large cycle", large)
+		}
+	}
+	{
+		large := []int{2, 1, 0, 3}
+		p := StartFrom(large, nil)
+		if !p.largeCycle {
+			t.Errorf("%v is large cycle", large)
+		}
+	}
+}
+
 const benchNum = 11
 
 func BenchmarkNext(b *testing.B) {

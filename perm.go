@@ -9,9 +9,10 @@ import (
 
 // Perm represents current permutation
 type Perm struct {
-	cur   []int
-	slice interface{}
-	done  bool
+	cur        []int
+	slice      interface{}
+	done       bool
+	largeCycle bool
 }
 
 // New returns permutation generator
@@ -26,6 +27,9 @@ func New(n int) *Perm {
 	p := Perm{cur: start}
 	if n < 2 {
 		p.done = true
+	}
+	if n <= 2 {
+		p.largeCycle = true
 	}
 	return &p
 }
@@ -43,7 +47,21 @@ func Iter(slice interface{}) *Perm {
 func StartFrom(index []int, slice interface{}) *Perm {
 	cur := make([]int, len(index))
 	copy(cur, index)
-	return &Perm{cur: cur, slice: slice}
+	largeCycle := true
+	// Does index belong to Large Cycle?
+	if n := len(index); n > 2 && (index[0] == n-1 || index[1] == n-1) {
+		for i := 2; i < n+2; i++ {
+			j := (i + 1) % n
+			if index[j] == n-1 {
+				j++
+			}
+			if index[i%n]-1 != index[j] {
+				largeCycle = false
+				break
+			}
+		}
+	}
+	return &Perm{cur: cur, slice: slice, largeCycle: largeCycle}
 }
 
 // Index returns current permutation as array index
@@ -59,14 +77,15 @@ func (p *Perm) Next() {
 		return
 	}
 	n := len(p.cur)
-	if n < 2 || isDescOrder(p.cur, n-1) {
+	if n < 2 || p.largeCycle && isDescOrder(p.cur, n-1) {
 		p.done = true
 		return
 	}
-	r := isDescOrder(p.cur, n)
-	successor(p, r)
-	if r && n > 2 {
+	smallCycleEnd := !p.largeCycle && isDescOrder(p.cur, n)
+	successor(p, smallCycleEnd)
+	if smallCycleEnd && n > 2 {
 		successor(p, false)
+		p.largeCycle = true
 	}
 }
 
