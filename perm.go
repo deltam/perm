@@ -32,9 +32,6 @@ func New(n int) *Perm {
 	if n < 2 {
 		p.done = true
 	}
-	if n <= 2 {
-		p.largeCycle = true
-	}
 	return &p
 }
 
@@ -88,14 +85,16 @@ func (p *Perm) Next() {
 		return
 	}
 	n := len(p.cur)
-	if n < 2 || p.largeCycle && isDescOrder(p.cur, n-1) {
-		p.done = true
+	if p.largeCycle {
+		successor(p, false)
+		if isDescOrder(p.cur, n-1) || n <= 2 {
+			p.done = true
+		}
 		return
 	}
-	smallCycleEnd := !p.largeCycle && isDescOrder(p.cur, n)
+	smallCycleEnd := isDescOrder(p.cur, n)
 	successor(p, smallCycleEnd)
-	if smallCycleEnd && n > 2 {
-		successor(p, false)
+	if smallCycleEnd {
 		p.largeCycle = true
 	}
 }
