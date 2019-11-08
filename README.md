@@ -1,8 +1,16 @@
+<p style="text-align:center;">
+<img src="https://raw.githubusercontent.com/deltam/perm/master/img/perm5_ribbon.png" width="800" alt="n=5 permutation order graph as TAOCP 7.2.1.2 Fig.22 style">
+</p>
+
 # perm
+
+[![GoDoc](https://godoc.org/github.com/deltam/perm?status.svg)](https://godoc.org/github.com/deltam/perm)
 
 Permutation generator based on group theory[^1].
 
-- Stateless, generate next permutation from current permutation only.
+- Fast
+- Stateless
+    - generate next permutation from current permutation only.
 - Permutation order is **NOT** lexical.
 
 ## Installation
@@ -48,6 +56,41 @@ func main() {
 // [1 0 2]	ACB
 ```
 
+## Performance
+
+This algorithm is 33% faster than naive recursive algorithm.
+
+<style>.benchstat tbody td:nth-child(1n+2) { text-align: right; padding: 0em 1em; }</style>
+<table class='benchstat'>
+<tr><th>name</th><th>time/op</th>
+<tr><td>Next-4</td><td>1.15s ± 9%</td>
+<tr><td>PermRecursive-4</td><td>1.73s ±11%</td>
+</table>
+
+
+```
+func BenchmarkPermRecursive(b *testing.B) {
+	n := benchNum
+	p := make([]int, n)
+	ignore := make([]bool, n)
+	recPerm(p, n, ignore)
+}
+
+func recPerm(p []int, n int, ignore []bool) {
+	if n == 0 {
+		return
+	}
+	for i := 0; i < len(p); i++ {
+		if !ignore[i] {
+			p[n-1] = i
+			ignore[i] = true
+			recPerm(p, n-1, ignore)
+			ignore[i] = false
+		}
+	}
+}
+```
+
 ## Background
 
 See paper[^1] for details.
@@ -57,19 +100,19 @@ See paper[^1] for details.
     sigma(rotation): (1, 2, ..., n) -> (2, 3, ..., n, 1)
     tau(swap):       (1, 2, ..., n) -> (2, 1, ..., n)
 
+<div style="text-align: center;">
 <img src="https://raw.githubusercontent.com/deltam/perm/master/img/cycle_cover4.png" width="600" alt="cycle cover by n=4">
+</div>
 
 Below is the Hamilton path created by split and join the two cycles.
 
+<div style="text-align: center;">
 <img src="https://raw.githubusercontent.com/deltam/perm/master/img/hamilton_path4.png" width="600" alt="hamilton path by n=4">
+</div>
 
 By observing above Hamilton path, you can discover local rule for generating that.
 
 See `perm.ruleSwap()` or this text[^2] for details.
-
-The order of the permutations generated is slightly different to make it simpler to determine the cycle end.
-[permutation order graph](https://raw.githubusercontent.com/deltam/perm/master/img/permgen_order4.png)
-
 
 ## License
 

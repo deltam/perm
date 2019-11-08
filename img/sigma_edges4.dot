@@ -1,0 +1,58 @@
+digraph cycleCover {
+r4321 [label="[4321]", shape="none", pos="259,149!", fontcolor="gray"];
+r4123 [label="[4123]", shape="none", pos="-259,-149!", fontcolor="gray"];
+r4132 [label="[4132]", shape="none", pos="0,-300!", fontcolor="gray"];
+r4312 [label="[4312]", shape="none", pos="259,-149!", fontcolor="gray"];
+r4213 [label="[4213]", shape="none", pos="-259,149!", fontcolor="gray"];
+r4231 [label="[4231]", shape="none", pos="0,300!", fontcolor="gray"];
+v2341 [label="2341", shape="circle", pos="-163,-174!"];
+v2413 [label="2413", shape="circle", pos="-70,-230!"];
+v4321 [label="4321", shape="circle", pos="163,174!"];
+v1342 [label="1342", shape="circle", pos="-284,245!"];
+v1432 [label="1432", shape="circle", pos="234,53!"];
+v1423 [label="1423", shape="circle", pos="-70,370!"];
+v2143 [label="2143", shape="circle", pos="355,124!"];
+v4123 [label="4123", shape="circle", pos="-355,-124!"];
+v1324 [label="1324", shape="circle", pos="70,-370!"];
+v1234 [label="1234", shape="circle", pos="-234,-53!"];
+v3142 [label="3142", shape="circle", pos="-70,230!"];
+v4132 [label="4132", shape="circle", pos="70,-230!"];
+v4312 [label="4312", shape="circle", pos="284,-245!"];
+v2134 [label="2134", shape="circle", pos="-355,124!"];
+v3421 [label="3421", shape="circle", pos="-163,174!"];
+v3124 [label="3124", shape="circle", pos="163,-174!"];
+v3412 [label="3412", shape="circle", pos="-284,-245!"];
+v4213 [label="4213", shape="circle", pos="-234,53!"];
+v2431 [label="2431", shape="circle", pos="355,-124!"];
+v3214 [label="3214", shape="circle", pos="284,245!"];
+v3241 [label="3241", shape="circle", pos="-70,-370!"];
+v1243 [label="1243", shape="circle", pos="234,-53!"];
+v4231 [label="4231", shape="circle", pos="70,370!"];
+v2314 [label="2314", shape="circle", pos="70,230!"];
+
+v1342 -> v3421 [color="black", style="solid"];
+v4312 -> v3124 [color="black", style="solid"];
+v1423 -> v4231 [color="black", style="solid"];
+v1324 -> v3241 [color="black", style="solid"];
+v4132 -> v1324 [color="black", style="solid"];
+v3142 -> v1423 [color="black", style="solid"];
+v2341 -> v3412 [color="black", style="solid"];
+v4231 -> v2314 [color="black", style="solid"];
+v3214 -> v2143 [color="black", style="solid"];
+v2431 -> v4312 [color="black", style="solid"];
+v4213 -> v2134 [color="black", style="solid"];
+v1243 -> v2431 [color="black", style="solid"];
+v3241 -> v2413 [color="black", style="solid"];
+v3124 -> v1243 [color="black", style="solid"];
+v1234 -> v2341 [color="black", style="solid"];
+v4123 -> v1234 [color="black", style="solid"];
+v3421 -> v4213 [color="black", style="solid"];
+v2413 -> v4132 [color="black", style="solid"];
+v2134 -> v1342 [color="black", style="solid"];
+v2143 -> v1432 [color="black", style="solid"];
+v2314 -> v3142 [color="black", style="solid"];
+v4321 -> v3214 [color="black", style="solid"];
+v3412 -> v4123 [color="black", style="solid"];
+v1432 -> v4321 [color="black", style="solid"];
+
+}
