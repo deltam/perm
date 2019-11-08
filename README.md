@@ -1,6 +1,6 @@
-<p style="text-align:center;">
-<img src="https://raw.githubusercontent.com/deltam/perm/master/img/perm5_ribbon.png" width="800" alt="n=5 permutation order graph as TAOCP 7.2.1.2 Fig.22 style">
-</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/deltam/perm/master/img/perm5_ribbon.png" width="850" alt="n=5 permutation order graph as TAOCP 7.2.1.2 Fig.22 style">
+</div>
 
 # perm
 
@@ -60,7 +60,6 @@ func main() {
 
 This algorithm is 33% faster than naive recursive algorithm.
 
-<style>.benchstat tbody td:nth-child(1n+2) { text-align: right; padding: 0em 1em; }</style>
 <table class='benchstat'>
 <tr><th>name</th><th>time/op</th>
 <tr><td>Next-4</td><td>1.15s ± 9%</td>
@@ -100,13 +99,13 @@ See paper[^1] for details.
     sigma(rotation): (1, 2, ..., n) -> (2, 3, ..., n, 1)
     tau(swap):       (1, 2, ..., n) -> (2, 1, ..., n)
 
-<div style="text-align: center;">
+<div align="center">
 <img src="https://raw.githubusercontent.com/deltam/perm/master/img/cycle_cover4.png" width="600" alt="cycle cover by n=4">
 </div>
 
 Below is the Hamilton path created by split and join the two cycles.
 
-<div style="text-align: center;">
+<div align="center">
 <img src="https://raw.githubusercontent.com/deltam/perm/master/img/hamilton_path4.png" width="600" alt="hamilton path by n=4">
 </div>
 
