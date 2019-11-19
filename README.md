@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/deltam/perm/master/img/perm5_ribbon.png" width="850" alt="n=5 permutation order graph as TAOCP 7.2.1.2 Fig.22 style">
+<img src="https://raw.githubusercontent.com/deltam/perm/master/img/perm5_ribbon.png" width="100%" alt="n=5 permutation order graph as TAOCP 7.2.1.2 Fig.22 style">
 </div>
 
 # perm
