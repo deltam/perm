@@ -4,7 +4,7 @@
 
 # perm
 
-[![GoDoc](https://godoc.org/github.com/deltam/perm?status.svg)](https://godoc.org/github.com/deltam/perm)
+[![GoDev]( https://pkg.go.dev/badge/github.com/deltam/perm)](https://pkg.go.dev/badge/github.com/deltam/perm)
 
 Permutation generator based on group theory[^1].
 
