@@ -121,17 +121,6 @@ func successor(p *Perm, forceRot bool) {
 	}
 }
 
-func rot(p []int) {
-	n := len(p)
-	f := p[0]
-	copy(p[0:n-1], p[1:n])
-	p[n-1] = f
-}
-
-func swap(p []int) {
-	p[1], p[0] = p[0], p[1]
-}
-
 func rotSlice(slice interface{}) {
 	rv := reflect.ValueOf(slice)
 	n := rv.Len()
@@ -142,6 +131,14 @@ func rotSlice(slice interface{}) {
 
 func swapSlice(slice interface{}) {
 	reflect.Swapper(slice)(0, 1)
+}
+
+func revSlice(slice interface{}) {
+	rv := reflect.ValueOf(slice)
+	n := rv.Len()
+	f := rv.Index(n - 1).Interface()
+	reflect.Copy(rv.Slice(1, n), rv.Slice(0, n-1))
+	rv.Index(0).Set(reflect.ValueOf(f))
 }
 
 func ruleSwap(p []int) bool {
