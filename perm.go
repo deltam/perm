@@ -133,14 +133,6 @@ func swapSlice(slice interface{}) {
 	reflect.Swapper(slice)(0, 1)
 }
 
-func revSlice(slice interface{}) {
-	rv := reflect.ValueOf(slice)
-	n := rv.Len()
-	f := rv.Index(n - 1).Interface()
-	reflect.Copy(rv.Slice(1, n), rv.Slice(0, n-1))
-	rv.Index(0).Set(reflect.ValueOf(f))
-}
-
 func ruleSwap(p []int) bool {
 	n := len(p)
 	if n <= 2 {
