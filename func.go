@@ -10,7 +10,7 @@ func Init(p []int) error {
 		return errors.New("len(p) >= 3")
 	}
 	for i := 0; i < n; i++ {
-		p[i] = n - i
+		p[i] = n - i - 1
 	}
 	swap(p)
 	return nil
@@ -18,7 +18,7 @@ func Init(p []int) error {
 
 func IsEnd(p []int) bool {
 	n := len(p)
-	return p[0] == n-2 && p[1] == n-1 && isReverse(p[2:n-1])
+	return p[0] == n-3 && p[1] == n-2 && isReverse(p[2:n-1])
 }
 
 func IsInterchange(p []int) bool {
@@ -30,15 +30,25 @@ func IsSwap(p []int) bool {
 	m := p[1]
 	r := p[2]
 
-	if p[0] != n && p[1] != n {
+	if p[0] != n-1 && p[1] != n-1 {
 		for i := 2; i < n; i++ {
-			if p[i] == n {
+			if p[i] == n-1 {
 				r = p[(i+1)%n]
 				break
 			}
 		}
 	}
-	return m == r%(n-1)+1
+	return m == (r+1)%(n-1)
+}
+
+func isReverse(p []int) bool {
+	n := len(p)
+	for i := 0; i < n; i++ {
+		if p[i] != n-i-1 {
+			return false
+		}
+	}
+	return true
 }
 
 type Move int8
@@ -79,14 +89,4 @@ func rot(p []int) {
 
 func swap(p []int) {
 	p[1], p[0] = p[0], p[1]
-}
-
-func isReverse(p []int) bool {
-	n := len(p)
-	for i := 0; i < n; i++ {
-		if p[i] != n-i {
-			return false
-		}
-	}
-	return true
 }
