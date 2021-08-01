@@ -26,7 +26,7 @@ func New(n int) *Perm {
 		start[i] = n - i - 1
 	}
 	if n > 2 {
-		swap(start)
+		OpSwap(start)
 	}
 	p := Perm{cur: start}
 	if n < 2 {
@@ -109,19 +109,19 @@ func successor(p *Perm, forceRot bool) {
 		return
 	}
 	if !forceRot && ruleSwap(p.cur) {
-		swap(p.cur)
+		OpSwap(p.cur)
 		if p.slice != nil {
 			swapSlice(p.slice)
 		}
 	} else {
-		rot(p.cur)
+		OpShift(p.cur)
 		if p.slice != nil {
-			rotSlice(p.slice)
+			shiftSlice(p.slice)
 		}
 	}
 }
 
-func rotSlice(slice interface{}) {
+func shiftSlice(slice interface{}) {
 	rv := reflect.ValueOf(slice)
 	n := rv.Len()
 	f := rv.Index(0).Interface()
