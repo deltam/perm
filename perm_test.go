@@ -8,22 +8,32 @@ import (
 func TestPerm_Next(t *testing.T) {
 	testcase := []struct {
 		n   int
-		ns  []int
 		all int
 	}{
-		{0, nil, 0},
-		{1, []int{1}, 0},
-		{2, []int{1, 2}, 1 * 2},
-		{3, []int{1, 2, 3}, 1 * 2 * 3},
-		{4, []int{1, 2, 3, 4}, 1 * 2 * 3 * 4},
-		{5, []int{1, 2, 3, 4, 5}, 1 * 2 * 3 * 4 * 5},
+		{0, 0},
+		{1, 0},
+		{2, 1 * 2},
+		{3, 1 * 2 * 3},
+		{4, 1 * 2 * 3 * 4},
+		{5, 1 * 2 * 3 * 4 * 5},
 	}
 	for _, tc := range testcase {
 		table := make(map[string]struct{}, tc.all)
 
-		p := Iter(tc.ns)
+		p, err := New(tc.n)
+		if tc.n < 3 {
+			if err == nil {
+				t.Errorf("New() must be fail: n=%d", tc.n)
+			}
+			continue
+		}
+		if err != nil {
+			t.Errorf("New() failed: n=%d, %v", tc.n, err)
+			continue
+		}
+
 		for i := 0; i < tc.all; i++ {
-			s := fmt.Sprintf("%v", tc.ns)
+			s := fmt.Sprintf("%v", p.Index())
 			if _, exist := table[s]; exist {
 				t.Errorf("n=%d: duplicate permutation: %s", tc.n, s)
 			}
@@ -37,48 +47,56 @@ func TestPerm_Next(t *testing.T) {
 	}
 }
 
-func TestPerm_Done(t *testing.T) {
+func TestPerm_HasNext(t *testing.T) {
 	testcase := []struct {
 		n   int
-		ns  []int
 		all int
 	}{
-		{0, nil, 0},
-		{1, []int{1}, 0},
-		{2, []int{1, 2}, 1 * 2},
-		{3, []int{1, 2, 3}, 1 * 2 * 3},
-		{4, []int{1, 2, 3, 4}, 1 * 2 * 3 * 4},
-		{5, []int{1, 2, 3, 4, 5}, 1 * 2 * 3 * 4 * 5},
+		{0, 0},
+		{1, 0},
+		{2, 1 * 2},
+		{3, 1 * 2 * 3},
+		{4, 1 * 2 * 3 * 4},
+		{5, 1 * 2 * 3 * 4 * 5},
 	}
 	for _, tc := range testcase {
-		p := Iter(tc.ns)
-		if tc.n > 1 {
-			for i := 0; i < tc.all-1; i++ {
-				if p.Done() {
-					t.Errorf("n=%d: not finished: Done got true, want false: [%d] %v", tc.n, i, tc.ns)
-				}
-				p.Next()
+		p, err := New(tc.n)
+		if tc.n < 3 {
+			if err == nil {
+				t.Errorf("New() must be fail: n=%d", tc.n)
 			}
+			continue
+		}
+		if err != nil {
+			t.Errorf("New() failed: n=%d, %v", tc.n, err)
+			continue
+		}
+		for i := 0; i < tc.all-1; i++ {
+			if !p.HasNext() {
+				t.Errorf("n=%d: not finished: HasNext got false, want true: [%d] %v", tc.n, i, p.Index())
+			}
+			p.Next()
 		}
 
-		if tc.n > 1 && p.Done() {
-			t.Errorf("n=%d: not finished: Done got true, want false: %v", tc.n, tc.ns)
+		if !p.HasNext() {
+			t.Errorf("n=%d: not finished: HasNext got false, want true: %v", tc.n, p.Index())
 		}
 		p.Next()
-		if !p.Done() {
-			t.Errorf("n=%d: finished: Done got false, want true: %v", tc.n, tc.ns)
+		if p.HasNext() {
+			t.Errorf("n=%d: finished: HasNext got true, want false: %v", tc.n, p.Index())
 		}
 		p.Next()
-		if !p.Done() {
-			t.Errorf("n=%d: finished: Done got still true, want false: %v", tc.n, tc.ns)
+		if p.HasNext() {
+			t.Errorf("n=%d: finished: HasNext got still false, want true: %v", tc.n, p.Index())
 		}
 	}
 }
 
+/*
 func TestPerm_StartFrom(t *testing.T) {
 	{
 		small := []int{2, 3, 1, 0}
-		p := StartFrom(small, nil)
+		p := StartFrom(small)
 		if p.largeCycle {
 			t.Errorf("%v is small cycle", small)
 		}
@@ -105,12 +123,15 @@ func TestPerm_StartFrom(t *testing.T) {
 		}
 	}
 }
-
+*/
 const benchNum = 11
 
 func BenchmarkNext(b *testing.B) {
-	p := New(benchNum)
-	for !p.Done() {
+	p, err := New(benchNum)
+	if err != nil {
+		b.Fatalf("New() failed: %v", err)
+	}
+	for p.HasNext() {
 		p.Next()
 	}
 }
