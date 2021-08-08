@@ -12,7 +12,7 @@ import "reflect"
 type Generator interface {
 	Index() []int
 	HasNext() bool
-	Next() (doSwap bool)
+	Next() (swapped bool)
 }
 
 // permState represents current permutation
@@ -79,7 +79,7 @@ func (p *permState) HasNext() bool {
 }
 
 // Next changes current permutation to next
-func (p *permState) Next() (doSwap bool) {
+func (p *permState) Next() bool {
 	if p.done {
 		return false
 	}
@@ -153,13 +153,13 @@ func (it *iterator) HasNext() bool {
 	return it.g.HasNext()
 }
 
-func (it *iterator) Next() (doSwap bool) {
+func (it *iterator) Next() (swapped bool) {
 	if !it.g.HasNext() {
 		return false
 	}
 
-	doSwap = it.g.Next()
-	if doSwap {
+	swapped = it.g.Next()
+	if swapped {
 		swapSlice(it.slice)
 		return
 	}
