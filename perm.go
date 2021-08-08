@@ -134,6 +134,10 @@ type iterator struct {
 	slice interface{}
 }
 
+func Bind(g Generator, slice interface{}) Generator {
+	return &iterator{g: g, slice: slice}
+}
+
 // Iter returns an iterator of slice's all permutation
 func Iter(slice interface{}) (Generator, error) {
 	rv := reflect.ValueOf(slice)
@@ -142,7 +146,7 @@ func Iter(slice interface{}) (Generator, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &iterator{g: g, slice: slice}, nil
+	return Bind(g, slice), nil
 }
 
 func (it *iterator) Index() []int {
