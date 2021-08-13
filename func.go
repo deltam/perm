@@ -58,6 +58,30 @@ func IsSwap(p []int) bool {
 	return m == (r+1)%(n-1)
 }
 
+// SmallCycleIndex returns index on small cycle start from n-2,n-1,n-3,...,2,1.
+// Index range is [0, 2(n-1)).
+// Returns -1 if p is not contained small cycle.
+func SmallCycleIndex(p []int) int {
+	n := len(p)
+	if p[0] != n-1 && p[1] != n-1 {
+		return -1
+	}
+	for i := 2; i < n-1; i++ {
+		if d := p[i] - p[i+1]; d != 1 && d != -(n-2) {
+			return -1
+		}
+	}
+	f := p[1]
+	var swap int
+	if p[1] == n-1 {
+		swap = 1
+		f = p[0]
+	}
+	all := 2 * (n - 1)
+	idx := 2*(n-2-f) + swap
+	return (idx - 1 + all) % all
+}
+
 func isReverse(p []int) bool {
 	n := len(p)
 	for i := 0; i < n; i++ {
