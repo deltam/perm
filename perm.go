@@ -17,10 +17,11 @@ type Generator interface {
 
 // permState represents current permutation
 type permState struct {
-	cur            []int
-	done           bool
-	smallCycleRest int
-	successor      func(*permState) bool
+	cur             []int
+	done            bool
+	successor       func(*permState) bool
+	smallCycleIndex int
+	smallCycleSize  int
 }
 
 // New returns permutation generator
@@ -30,39 +31,34 @@ func New(n int) (Generator, error) {
 		return nil, err
 	}
 	return &permState{
-		cur:            start,
-		smallCycleRest: 2 * (n - 1),
-		successor:      successorSmallCycle,
+		cur:             start,
+		successor:       successorSmallCycleShift,
+		smallCycleIndex: 0,
+		smallCycleSize:  2 * (n - 1),
 	}, nil
 }
 
 // StartFrom returns permutation generator that start from specified permutation
 func StartFrom(index []int) Generator {
-	cur := make([]int, len(index))
+	n := len(index)
+	cur := make([]int, n)
 	copy(cur, index)
-	largeCycle := true
-	// Does index belong to Large Cycle?
-	if n := len(index); n > 2 && (index[0] == n-1 || index[1] == n-1) {
-		for i := 2; i < n+2; i++ {
-			j := (i + 1) % n
-			if index[j] == n-1 {
-				j++
-			}
-			if index[i%n]-1 != index[j] {
-				largeCycle = false
-				break
-			}
-		}
-	}
-	if largeCycle {
+	idx := SmallCycleIndex(cur)
+	if idx < 0 {
 		return &permState{
 			cur:       cur,
 			successor: successorLargeCycle,
 		}
 	}
+	succ := successorSmallCycleSwap
+	if idx%2 == 0 {
+		succ = successorSmallCycleShift
+	}
 	return &permState{
-		cur:       cur,
-		successor: successorSmallCycle2,
+		cur:             cur,
+		smallCycleIndex: idx,
+		smallCycleSize:  2 * (n - 1),
+		successor:       succ,
 	}
 }
 
@@ -86,33 +82,29 @@ func (p *permState) Next() bool {
 	return p.successor(p)
 }
 
-// if returns true do swap
-func successorSmallCycle(p *permState) bool {
-	p.smallCycleRest--
-	if p.smallCycleRest <= 0 {
+func successorSmallCycleSwap(p *permState) bool {
+	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
 		OpShift(p.cur)
 		return false
 	}
-	if p.smallCycleRest%2 == 0 {
-		OpSwap(p.cur)
-		return true
-	}
-	OpShift(p.cur)
-	return false
+
+	OpSwap(p.cur)
+	p.smallCycleIndex++
+	p.successor = successorSmallCycleShift
+	return true
 }
 
-func successorSmallCycle2(p *permState) bool {
-	if IsSwap(p.cur) {
-		if IsSmallCycleEnd(p.cur) {
-			p.successor = successorLargeCycle
-			OpShift(p.cur)
-			return false
-		}
-		OpSwap(p.cur)
-		return true
+func successorSmallCycleShift(p *permState) bool {
+	if p.smallCycleIndex >= p.smallCycleSize-1 {
+		p.successor = successorLargeCycle
+		OpShift(p.cur)
+		return false
 	}
+
 	OpShift(p.cur)
+	p.smallCycleIndex++
+	p.successor = successorSmallCycleSwap
 	return false
 }
 
