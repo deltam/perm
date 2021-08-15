@@ -1,158 +1,67 @@
-package perm
+package perm_test
 
 import (
 	"fmt"
-	"testing"
+	"log"
+
+	"github.com/deltam/perm"
 )
 
-func TestPerm_Next(t *testing.T) {
-	testcase := []struct {
-		n   int
-		all int
-	}{
-		{0, 0},
-		{1, 0},
-		{2, 1 * 2},
-		{3, 1 * 2 * 3},
-		{4, 1 * 2 * 3 * 4},
-		{5, 1 * 2 * 3 * 4 * 5},
+func Example() {
+	p := make([]int, 3)
+	if err := perm.Init(p); err != nil {
+		log.Fatal(err)
 	}
-	for _, tc := range testcase {
-		table := make(map[string]struct{}, tc.all)
 
-		p, err := New(tc.n)
-		if tc.n < 3 {
-			if err == nil {
-				t.Errorf("New() must be fail: n=%d", tc.n)
-			}
-			continue
-		}
-		if err != nil {
-			t.Errorf("New() failed: n=%d, %v", tc.n, err)
-			continue
-		}
-
-		for i := 0; i < tc.all; i++ {
-			s := fmt.Sprintf("%v", p.Index())
-			if _, exist := table[s]; exist {
-				t.Errorf("n=%d: duplicate permutation: %s", tc.n, s)
-			}
-			table[s] = struct{}{}
-			p.Next()
-		}
-
-		if len(table) != tc.all {
-			t.Errorf("n=%d: all permutation count failed: %d", tc.n, len(table))
-		}
+	for !perm.IsEnd(p) {
+		fmt.Println(p)
+		perm.Advance(p)
 	}
+	fmt.Println(p)
+	// Output:
+	// [1 2 0]
+	// [2 0 1]
+	// [0 2 1]
+	// [2 1 0]
+	// [1 0 2]
+	// [0 1 2]
 }
 
-func TestPerm_HasNext(t *testing.T) {
-	testcase := []struct {
-		n   int
-		all int
-	}{
-		{0, 0},
-		{1, 0},
-		{2, 1 * 2},
-		{3, 1 * 2 * 3},
-		{4, 1 * 2 * 3 * 4},
-		{5, 1 * 2 * 3 * 4 * 5},
-	}
-	for _, tc := range testcase {
-		p, err := New(tc.n)
-		if tc.n < 3 {
-			if err == nil {
-				t.Errorf("New() must be fail: n=%d", tc.n)
-			}
-			continue
-		}
-		if err != nil {
-			t.Errorf("New() failed: n=%d, %v", tc.n, err)
-			continue
-		}
-		for i := 0; i < tc.all-1; i++ {
-			if !p.HasNext() {
-				t.Errorf("n=%d: not finished: HasNext got false, want true: [%d] %v", tc.n, i, p.Index())
-			}
-			p.Next()
-		}
-
-		if !p.HasNext() {
-			t.Errorf("n=%d: not finished: HasNext got false, want true: %v", tc.n, p.Index())
-		}
-		p.Next()
-		if p.HasNext() {
-			t.Errorf("n=%d: finished: HasNext got true, want false: %v", tc.n, p.Index())
-		}
-		p.Next()
-		if p.HasNext() {
-			t.Errorf("n=%d: finished: HasNext got still false, want true: %v", tc.n, p.Index())
-		}
-	}
-}
-
-/*
-func TestPerm_StartFrom(t *testing.T) {
-	{
-		small := []int{2, 3, 1, 0}
-		p := StartFrom(small)
-		if p.largeCycle {
-			t.Errorf("%v is small cycle", small)
-		}
-	}
-	{
-		small := []int{3, 1, 0, 2}
-		p := StartFrom(small, nil)
-		if p.largeCycle {
-			t.Errorf("%v is small cycle", small)
-		}
-	}
-	{
-		large := []int{1, 2, 0, 3}
-		p := StartFrom(large, nil)
-		if !p.largeCycle {
-			t.Errorf("%v is large cycle", large)
-		}
-	}
-	{
-		large := []int{2, 1, 0, 3}
-		p := StartFrom(large, nil)
-		if !p.largeCycle {
-			t.Errorf("%v is large cycle", large)
-		}
-	}
-}
-*/
-const benchNum = 11
-
-func BenchmarkNext(b *testing.B) {
-	p, err := New(benchNum)
+func ExampleNew() {
+	g, err := perm.New(3)
 	if err != nil {
-		b.Fatalf("New() failed: %v", err)
+		log.Fatal(err)
 	}
-	for p.HasNext() {
-		p.Next()
+
+	for g.HasNext() {
+		fmt.Println(g.Index())
+		g.Next()
 	}
+	// Output:
+	// [1 2 0]
+	// [2 0 1]
+	// [0 2 1]
+	// [2 1 0]
+	// [1 0 2]
+	// [0 1 2]
 }
 
-func BenchmarkPermRecursive(b *testing.B) {
-	n := benchNum
-	p := make([]int, n)
-	ignore := make([]bool, n)
-	recPerm(p, n, ignore)
-}
+func ExampleIter() {
+	ss := []rune("abc")
+	g, err := perm.Iter(ss)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-func recPerm(p []int, n int, ignore []bool) {
-	if n == 0 {
-		return
+	for g.HasNext() {
+		fmt.Println(string(ss))
+		g.Next()
 	}
-	for i := 0; i < len(p); i++ {
-		if !ignore[i] {
-			p[n-1] = i
-			ignore[i] = true
-			recPerm(p, n-1, ignore)
-			ignore[i] = false
-		}
-	}
+	// Output:
+	// abc
+	// bca
+	// cba
+	// bac
+	// acb
+	// cab
 }
