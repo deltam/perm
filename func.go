@@ -30,7 +30,7 @@ func Step(p []int) (swapped bool) {
 		OpSwap(p)
 		return true
 	}
-	OpShift(p)
+	OpRotate(p)
 	return false
 }
 
@@ -92,7 +92,7 @@ func isReverse(p []int) bool {
 	return true
 }
 
-func OpShift(p []int) {
+func OpRotate(p []int) {
 	n := len(p)
 	f := p[0]
 	copy(p[0:n-1], p[1:n])

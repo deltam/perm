@@ -85,7 +85,7 @@ func (p *permState) Next() bool {
 func successorSmallCycleSwap(p *permState) bool {
 	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
-		OpShift(p.cur)
+		OpRotate(p.cur)
 		return false
 	}
 
@@ -98,11 +98,11 @@ func successorSmallCycleSwap(p *permState) bool {
 func successorSmallCycleShift(p *permState) bool {
 	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
-		OpShift(p.cur)
+		OpRotate(p.cur)
 		return false
 	}
 
-	OpShift(p.cur)
+	OpRotate(p.cur)
 	p.smallCycleIndex++
 	p.successor = successorSmallCycleSwap
 	return false
@@ -117,7 +117,7 @@ func successorLargeCycle(p *permState) bool {
 		OpSwap(p.cur)
 		return true
 	}
-	OpShift(p.cur)
+	OpRotate(p.cur)
 	return false
 }
 
