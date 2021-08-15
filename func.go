@@ -25,7 +25,7 @@ func Init(p []int) error {
 	return nil
 }
 
-func Step(p []int) (swapped bool) {
+func Advance(p []int) (swapped bool) {
 	if IsSwap(p) && !IsSmallCycleEnd(p) {
 		OpSwap(p)
 		return true
