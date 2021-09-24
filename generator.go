@@ -8,14 +8,14 @@ import "reflect"
 type Generator interface {
 	Index() []int
 	HasNext() bool
-	Next() (swapped bool)
+	Next()
 }
 
 // permState represents current permutation generator state.
 type permState struct {
 	cur             []int
 	done            bool
-	successor       func(*permState) bool
+	successor       func(*permState)
 	smallCycleIndex int
 	smallCycleSize  int
 }
@@ -71,53 +71,50 @@ func (p *permState) HasNext() bool {
 }
 
 // Next changes current permutation to next
-func (p *permState) Next() bool {
+func (p *permState) Next() {
 	if !p.done && IsEnd(p.cur) {
 		p.done = true
 	}
 	if p.done {
-		return false
+		return
 	}
-	return p.successor(p)
+	p.successor(p)
 }
 
-func successorSmallCycleSwap(p *permState) bool {
+func successorSmallCycleSwap(p *permState) {
 	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
 		OpRotate(p.cur)
-		return false
+		return
 	}
 
 	OpSwap(p.cur)
 	p.smallCycleIndex++
 	p.successor = successorSmallCycleShift
-	return true
 }
 
-func successorSmallCycleShift(p *permState) bool {
+func successorSmallCycleShift(p *permState) {
 	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
 		OpRotate(p.cur)
-		return false
+		return
 	}
 
 	OpRotate(p.cur)
 	p.smallCycleIndex++
 	p.successor = successorSmallCycleSwap
-	return false
 }
 
-func successorLargeCycle(p *permState) bool {
+func successorLargeCycle(p *permState) {
 	if IsSwap(p.cur) {
 		if IsEnd(p.cur) {
 			p.done = true
-			return false
+			return
 		}
 		OpSwap(p.cur)
-		return true
+		return
 	}
 	OpRotate(p.cur)
-	return false
 }
 
 type iterator struct {
@@ -148,18 +145,18 @@ func (it *iterator) HasNext() bool {
 	return it.g.HasNext()
 }
 
-func (it *iterator) Next() (swapped bool) {
+func (it *iterator) Next() {
 	if !it.g.HasNext() {
-		return false
+		return
 	}
 
-	swapped = it.g.Next()
-	if swapped {
+	third := it.g.Index()[2]
+	it.g.Next()
+	if third == it.g.Index()[2] {
 		swapSlice(it.slice)
 		return
 	}
 	shiftSlice(it.slice)
-	return
 }
 
 func shiftSlice(slice interface{}) {
