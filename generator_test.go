@@ -124,7 +124,18 @@ func TestPerm_StartFrom(t *testing.T) {
 	}
 }
 */
-const benchNum = 11
+
+const benchNum = 10
+
+func BenchmarkAdvance(b *testing.B) {
+	p := make([]int, benchNum)
+	if err := Init(p); err != nil {
+		b.Fatalf("Init() failed: %v", err)
+	}
+	for !IsEnd(p) {
+		Advance(p)
+	}
+}
 
 func BenchmarkNext(b *testing.B) {
 	p, err := New(benchNum)
