@@ -71,7 +71,7 @@ func TestPerm_HasNext(t *testing.T) {
 			t.Errorf("New() failed: n=%d, %v", tc.n, err)
 			continue
 		}
-		for i := 0; i < tc.all-1; i++ {
+		for i := 1; i <= tc.all-1; i++ {
 			if !p.HasNext() {
 				t.Errorf("n=%d: not finished: HasNext got false, want true: [%d] %v", tc.n, i, p.Index())
 			}
