@@ -33,9 +33,8 @@ func ExampleNew() {
 		log.Fatal(err)
 	}
 
-	for g.HasNext() {
+	for ; g.HasNext(); g.Next() {
 		fmt.Println(g.Index())
-		g.Next()
 	}
 	// Output:
 	// [1 2 0]
@@ -53,9 +52,8 @@ func ExampleIter() {
 		log.Fatal(err)
 	}
 
-	for g.HasNext() {
+	for ; g.HasNext(); g.Next() {
 		fmt.Println(string(ss))
-		g.Next()
 	}
 	// Output:
 	// abc

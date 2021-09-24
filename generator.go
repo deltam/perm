@@ -72,6 +72,9 @@ func (p *permState) HasNext() bool {
 
 // Next changes current permutation to next
 func (p *permState) Next() bool {
+	if !p.done && IsEnd(p.cur) {
+		p.done = true
+	}
 	if p.done {
 		return false
 	}
