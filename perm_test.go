@@ -33,7 +33,7 @@ func ExampleNew() {
 		log.Fatal(err)
 	}
 
-	for ; g.HasNext(); g.Next() {
+	for ; !g.Done(); g.Next() {
 		fmt.Println(g.Index())
 	}
 	// Output:
@@ -52,7 +52,7 @@ func ExampleIter() {
 		log.Fatal(err)
 	}
 
-	for ; g.HasNext(); g.Next() {
+	for ; !g.Done(); g.Next() {
 		fmt.Println(string(ss))
 	}
 	// Output:

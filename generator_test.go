@@ -47,7 +47,7 @@ func TestPerm_Next(t *testing.T) {
 	}
 }
 
-func TestPerm_HasNext(t *testing.T) {
+func TestPerm_Done(t *testing.T) {
 	testcase := []struct {
 		n   int
 		all int
@@ -72,22 +72,22 @@ func TestPerm_HasNext(t *testing.T) {
 			continue
 		}
 		for i := 1; i <= tc.all-1; i++ {
-			if !p.HasNext() {
-				t.Errorf("n=%d: not finished: HasNext got false, want true: [%d] %v", tc.n, i, p.Index())
+			if p.Done() {
+				t.Errorf("n=%d: not finished: Done got false, want true: [%d] %v", tc.n, i, p.Index())
 			}
 			p.Next()
 		}
 
-		if !p.HasNext() {
-			t.Errorf("n=%d: not finished: HasNext got false, want true: %v", tc.n, p.Index())
+		if p.Done() {
+			t.Errorf("n=%d: not finished: Done got false, want true: %v", tc.n, p.Index())
 		}
 		p.Next()
-		if p.HasNext() {
-			t.Errorf("n=%d: finished: HasNext got true, want false: %v", tc.n, p.Index())
+		if !p.Done() {
+			t.Errorf("n=%d: finished: Done got true, want false: %v", tc.n, p.Index())
 		}
 		p.Next()
-		if p.HasNext() {
-			t.Errorf("n=%d: finished: HasNext got still false, want true: %v", tc.n, p.Index())
+		if !p.Done() {
+			t.Errorf("n=%d: finished: Done got still false, want true: %v", tc.n, p.Index())
 		}
 	}
 }
@@ -142,7 +142,7 @@ func BenchmarkNext(b *testing.B) {
 	if err != nil {
 		b.Fatalf("New() failed: %v", err)
 	}
-	for p.HasNext() {
+	for !p.Done() {
 		p.Next()
 	}
 }

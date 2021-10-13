@@ -7,7 +7,7 @@ import "reflect"
 // Generator is an interface of permutation generator.
 type Generator interface {
 	Index() []int
-	HasNext() bool
+	Done() bool
 	Next()
 }
 
@@ -66,8 +66,8 @@ func (p *permState) Index() []int {
 }
 
 // HasNext returns true if current permutation is not last
-func (p *permState) HasNext() bool {
-	return !p.done
+func (p *permState) Done() bool {
+	return p.done
 }
 
 // Next changes current permutation to next
@@ -141,12 +141,12 @@ func (it *iterator) Index() []int {
 	return it.g.Index()
 }
 
-func (it *iterator) HasNext() bool {
-	return it.g.HasNext()
+func (it *iterator) Done() bool {
+	return it.g.Done()
 }
 
 func (it *iterator) Next() {
-	if !it.g.HasNext() {
+	if it.g.Done() {
 		return
 	}
 
