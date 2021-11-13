@@ -28,7 +28,7 @@ func New(n int) (Generator, error) {
 	}
 	return &permState{
 		cur:             start,
-		successor:       successorSmallCycleShift,
+		successor:       successorSmallCycle,
 		smallCycleIndex: 0,
 		smallCycleSize:  2 * (n - 1),
 	}, nil
@@ -46,15 +46,11 @@ func StartFrom(index []int) Generator {
 			successor: successorLargeCycle,
 		}
 	}
-	succ := successorSmallCycleSwap
-	if idx%2 == 0 {
-		succ = successorSmallCycleShift
-	}
 	return &permState{
 		cur:             cur,
 		smallCycleIndex: idx,
 		smallCycleSize:  2 * (n - 1),
-		successor:       succ,
+		successor:       successorSmallCycle,
 	}
 }
 
@@ -81,36 +77,23 @@ func (p *permState) Next() {
 	p.successor(p)
 }
 
-func successorSmallCycleSwap(p *permState) {
+func successorSmallCycle(p *permState) {
 	if p.smallCycleIndex >= p.smallCycleSize-1 {
 		p.successor = successorLargeCycle
 		OpRotate(p.cur)
 		return
 	}
 
-	OpSwap(p.cur)
-	p.smallCycleIndex++
-	p.successor = successorSmallCycleShift
-}
-
-func successorSmallCycleShift(p *permState) {
-	if p.smallCycleIndex >= p.smallCycleSize-1 {
-		p.successor = successorLargeCycle
+	if p.smallCycleIndex%2 == 0 {
 		OpRotate(p.cur)
-		return
+	} else {
+		OpSwap(p.cur)
 	}
-
-	OpRotate(p.cur)
 	p.smallCycleIndex++
-	p.successor = successorSmallCycleSwap
 }
 
 func successorLargeCycle(p *permState) {
 	if IsSwap(p.cur) {
-		if IsEnd(p.cur) {
-			p.done = true
-			return
-		}
 		OpSwap(p.cur)
 		return
 	}
@@ -156,10 +139,10 @@ func (it *iterator) Next() {
 		swapSlice(it.slice)
 		return
 	}
-	shiftSlice(it.slice)
+	rotateSlice(it.slice)
 }
 
-func shiftSlice(slice interface{}) {
+func rotateSlice(slice interface{}) {
 	rv := reflect.ValueOf(slice)
 	n := rv.Len()
 	f := rv.Index(0).Interface()
