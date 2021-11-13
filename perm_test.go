@@ -106,12 +106,14 @@ func TestPerm_StartFrom(t *testing.T) {
 	}
 }
 
-const benchNum = 11
+const benchNum = 7
 
-func BenchmarkNext(b *testing.B) {
-	p := New(benchNum)
-	for !p.Done() {
-		p.Next()
+func BenchmarkGenerator(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		p := New(benchNum)
+		for !p.Done() {
+			p.Next()
+		}
 	}
 }
 
@@ -119,7 +121,9 @@ func BenchmarkPermRecursive(b *testing.B) {
 	n := benchNum
 	p := make([]int, n)
 	ignore := make([]bool, n)
-	recPerm(p, n, ignore)
+	for i := 0; i < b.N; i++ {
+		recPerm(p, n, ignore)
+	}
 }
 
 func recPerm(p []int, n int, ignore []bool) {
