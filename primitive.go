@@ -49,12 +49,16 @@ func IsEnd(p []int) bool {
 // IsSwap returns true if next operator is swap.
 func IsSwap(p []int) bool {
 	n := len(p)
+	r := p[0]
 	m := p[1]
-	r := p[2]
-	if p[0] != n-1 && p[1] != n-1 {
-		for i := 2; i < n; i++ {
+	if r == n-1 {
+		r = p[2]
+	} else if m == n-1 {
+		return false
+	} else {
+		for i := 2; i < n-1; i++ {
 			if p[i] == n-1 {
-				r = p[(i+1)%n]
+				r = p[i+1]
 				break
 			}
 		}
