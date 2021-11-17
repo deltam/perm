@@ -25,7 +25,12 @@ Index only:
 
 ```go
 func main() {
-	for p := perm.New(3); !p.Done(); p.Next() {
+	g, err := perm.New(3)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for ; !p.Done(); p.Next() {
 		fmt.Println(p.Index())
 	}
 }
@@ -43,7 +48,12 @@ Permutation of slice:
 ```go
 func main() {
 	words := []rune("ABC")
-	for p := perm.Iter(words); !p.Done(); p.Next() {
+	g, err := perm.Iter(ss)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for ; !p.Done(); p.Next() {
 		fmt.Printf("%v\t%s\n", p.Index(), string(words))
 	}
 }
@@ -58,23 +68,20 @@ func main() {
 
 ## Performance
 
-This algorithm is 33% faster than naive recursive algorithm.
+This algorithm is 40~50% faster than naive recursive algorithm.
 
-<table class='benchstat'>
-<tr><th>name</th><th>time/op</th>
-<tr><td>Next-4</td><td>1.15s ± 9%</td>
-<tr><td>PermRecursive-4</td><td>1.73s ±11%</td>
+<table class='benchstat '>
+<tbody>
+<tr><th><th>time/op
+<tr><td>Primitive-8<td>33.3µs ± 2%
+<tr><td>Generator-8<td>39.1µs ± 2%
+<tr><td>PermRecursive-8<td>66.9µs ± 1%
+<tr><td>&nbsp;
+</tbody>
 </table>
 
 
 ```go
-func BenchmarkPermRecursive(b *testing.B) {
-	n := benchNum
-	p := make([]int, n)
-	ignore := make([]bool, n)
-	recPerm(p, n, ignore)
-}
-
 func recPerm(p []int, n int, ignore []bool) {
 	if n == 0 {
 		return
