@@ -101,6 +101,7 @@ type iterator struct {
 	slice interface{}
 }
 
+// Bind returns a Generator that applies the same operator to slice
 func Bind(g Generator, slice interface{}) Generator {
 	return &iterator{g: g, slice: slice}
 }
