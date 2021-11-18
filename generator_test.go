@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestPerm_Next(t *testing.T) {
+func Test_permState_Next(t *testing.T) {
 	testcase := []struct {
 		n   int
 		all int
@@ -47,7 +47,7 @@ func TestPerm_Next(t *testing.T) {
 	}
 }
 
-func TestPerm_Done(t *testing.T) {
+func Test_permStart_Done(t *testing.T) {
 	testcase := []struct {
 		n   int
 		all int
@@ -92,35 +92,27 @@ func TestPerm_Done(t *testing.T) {
 	}
 }
 
-/*
-func TestPerm_StartFrom(t *testing.T) {
-	{
-		small := []int{2, 3, 1, 0}
-		p := StartFrom(small)
-		if p.largeCycle {
-			t.Errorf("%v is small cycle", small)
-		}
+func TestStartFrom(t *testing.T) {
+	testCases := map[string]struct {
+		p    []int
+		next []int
+	}{
+		"start->second":   {[]int{2, 3, 1, 0}, []int{3, 1, 0, 2}},
+		"small->large":    {[]int{3, 2, 1, 0}, []int{2, 1, 0, 3}},
+		"end not advance": {[]int{1, 2, 0, 3}, []int{1, 2, 0, 3}},
 	}
-	{
-		small := []int{3, 1, 0, 2}
-		p := StartFrom(small, nil)
-		if p.largeCycle {
-			t.Errorf("%v is small cycle", small)
-		}
-	}
-	{
-		large := []int{1, 2, 0, 3}
-		p := StartFrom(large, nil)
-		if !p.largeCycle {
-			t.Errorf("%v is large cycle", large)
-		}
-	}
-	{
-		large := []int{2, 1, 0, 3}
-		p := StartFrom(large, nil)
-		if !p.largeCycle {
-			t.Errorf("%v is large cycle", large)
-		}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			g := StartFrom(tc.p)
+			g.Next()
+			cur := g.Index()
+			for i, k := range tc.next {
+				if k != cur[i] {
+					t.Errorf("wrong next permutation: %v != next:%v", cur, tc.next)
+					break
+				}
+			}
+		})
 	}
 }
-*/
