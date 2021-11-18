@@ -13,10 +13,8 @@ type Generator interface {
 
 // permState represents current permutation generator state.
 type permState struct {
-	cur             []int
-	done            bool
-	inSmallCycle    bool
-	smallCycleIndex int
+	cur  []int
+	done bool
 }
 
 // New returns permutation generator
@@ -25,29 +23,14 @@ func New(n int) (Generator, error) {
 	if err := Init(start); err != nil {
 		return nil, err
 	}
-	return &permState{
-		cur:          start,
-		inSmallCycle: true,
-	}, nil
+	return &permState{cur: start}, nil
 }
 
 // StartFrom returns permutation generator that start from specified permutation
 func StartFrom(index []int) Generator {
-	n := len(index)
-	cur := make([]int, n)
+	cur := make([]int, len(index))
 	copy(cur, index)
-	idx := SmallCycleIndex(cur)
-	if idx < 0 {
-		return &permState{
-			cur:          cur,
-			inSmallCycle: false,
-		}
-	}
-	return &permState{
-		cur:             cur,
-		inSmallCycle:    true,
-		smallCycleIndex: idx,
-	}
+	return &permState{cur: cur}
 }
 
 // Index returns current permutation as array
@@ -64,34 +47,15 @@ func (p *permState) Done() bool {
 
 // Next changes current permutation to next
 func (p *permState) Next() {
-	// Small Cycle Rule
-	if p.inSmallCycle {
-		if p.smallCycleIndex < 2*(len(p.cur)-1)-1 {
-			if p.smallCycleIndex%2 == 0 {
-				OpRotate(p.cur)
-			} else {
-				OpSwap(p.cur)
-			}
-			p.smallCycleIndex++
+	if IsSwap(p.cur) {
+		if IsEnd(p.cur) {
+			p.done = true
 			return
 		}
-		p.inSmallCycle = false
-		OpRotate(p.cur)
-		return
-	}
-
-	// End Rule
-	if !p.done && IsEnd(p.cur) {
-		p.done = true
-	}
-	if p.done {
-		return
-	}
-
-	// Large Cycle Rule
-	if IsSwap(p.cur) {
-		OpSwap(p.cur)
-		return
+		if !IsSmallCycleEnd(p.cur) {
+			OpSwap(p.cur)
+			return
+		}
 	}
 	OpRotate(p.cur)
 }
