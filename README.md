@@ -25,14 +25,16 @@ Index only:
 
 ```go
 func main() {
-	g, err := perm.New(3)
-	if err != nil {
+	p := make([]int, 3)
+	if err := perm.Init(p); err != nil {
 		log.Fatal(err)
 	}
 
-	for ; !p.Done(); p.Next() {
-		fmt.Println(p.Index())
+	for !perm.IsEnd(p) {
+		fmt.Println(p)
+		perm.Advance(p)
 	}
+	fmt.Println(p)
 }
 // Output:
 // [1 2 0]
