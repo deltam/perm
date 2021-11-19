@@ -2,8 +2,12 @@
 
 // Package perm provides a permutation generator based on group theory.
 //
+// With this algorithm, all permutations can be done with only swap(0,1,2,3 -> 1,0,2,3) and rotation(0,1,2,3 -> 1,2,3,0).
+// Implementations are OpSwap and OpRotate respectively.
+// The permutation order starts with (n-2,n-1,n-3,...,2,1,0) and ends with (n-3,n-2,n-1,...,2,1,0), not lexical.
+//
 // The generated permutations belong to either Small Cycle or Large Cycle.
-// The generated permutations starts at small cycle and ends at large cycle.
+// The generated permutations start with small cycle and end with large cycle.
 //
 // Small cycle is start from permutation initialized by Init(), end at reverse order(n-1,n-2,...,1,0).
 // If applied swap to small cycle end, move to start.
