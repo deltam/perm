@@ -78,7 +78,6 @@ This algorithm is 40~50% faster than naive recursive algorithm.
 <tr><td>Primitive-8<td>33.3µs ± 2%
 <tr><td>Generator-8<td>39.1µs ± 2%
 <tr><td>PermRecursive-8<td>66.9µs ± 1%
-<tr><td>&nbsp;
 </tbody>
 </table>
 
@@ -122,7 +121,7 @@ Below is the Hamilton path created by split and join the two cycles.
 
 By observing above Hamilton path, you can discover local rule for generating that.
 
-See `perm.ruleSwap()` or this text[^2][^3] for details.
+See `primitive.go` or this text[^2][^3] for details.
 
 ## License
 
