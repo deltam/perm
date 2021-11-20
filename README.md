@@ -25,16 +25,14 @@ Index only:
 
 ```go
 func main() {
-	p := make([]int, 3)
-	if err := perm.Init(p); err != nil {
+	g, err := perm.New(3)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	for !perm.IsEnd(p) {
+	for ; !g.Done(); g.Next() {
 		fmt.Println(p)
-		perm.Advance(p)
 	}
-	fmt.Println(p)
 }
 // Output:
 // [1 2 0]
@@ -55,8 +53,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for ; !p.Done(); p.Next() {
-		fmt.Printf("%v\t%s\n", p.Index(), string(words))
+	for ; !g.Done(); g.Next() {
+		fmt.Printf("%v\t%s\n", g.Index(), string(words))
 	}
 }
 // Output:
